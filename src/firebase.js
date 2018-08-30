@@ -11,3 +11,5 @@ var config = {
 firebase.initializeApp(config);
 
 export const database = firebase.database().ref('/players');
+export const auth = firebase.auth();
+export const googleProvider = new firebase.auth.GoogleAuthProvider();

@@ -3,6 +3,8 @@ import './App.css';
 import _ from 'lodash';
 import {connect} from 'react-redux';
 import {getPlayers, savePlayer, deletePlayer} from '../actions/playersAction';
+import PlayerCard from './PlayerCard';
+import { getUser } from '../actions/userAction';
 
 
 class App extends Component {
@@ -22,6 +24,7 @@ constructor(props) {
 
 componentDidMount() {
   this.props.getPlayers();
+  this.props.getUser();
 }
 
 handleChange(e) {
@@ -41,17 +44,16 @@ handleSubmit(e) {
     title: '',
     body: '',
   })
-  console.log('submit');
 }
 
 renderPlayers() {
   return _.map(this.props.players, (player, key) => {
     return (
-      <div key="key">
+      <PlayerCard key={key}>
         <p>{player.title}</p>
         <h2>{player.body}</h2>
         <button className="delete-button" onClick={()=>this.props.deletePlayer(key)}>Delete</button>
-      </div>
+      </PlayerCard>
     )
   });
 }
@@ -96,8 +98,9 @@ renderPlayers() {
 
 function mapStateToProps(state, ownProps) {
   return {
-    players: state.players
+    players: state.players,
+    user: state.user
   }
 }
 
-export default connect(mapStateToProps, { getPlayers, savePlayer, deletePlayer })(App);
+export default connect(mapStateToProps, { getPlayers, savePlayer, deletePlayer, getUser })(App);
