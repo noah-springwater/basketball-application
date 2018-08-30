@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
-import { database } from '../firebase';
 import _ from 'lodash';
+import {connect} from 'react-redux';
+import {getPlayers, savePlayer, deletePlayer} from '../actions/playersAction';
 
 
 class App extends Component {
@@ -12,19 +13,15 @@ constructor(props) {
   this.state = {
     title: '',
     body: '',
-    players: {}
   };
 
   this.handleChange = this.handleChange.bind(this);
   this.handleSubmit = this.handleSubmit.bind(this);
+  this.renderPlayers = this.renderPlayers.bind(this);
 }
 
 componentDidMount() {
-  database.on('value', (snapshot) => {
-    this.setState({
-      players: snapshot.val()
-    })
-  })
+  this.props.getPlayers();
 }
 
 handleChange(e) {
@@ -39,8 +36,7 @@ handleSubmit(e) {
     title: this.state.title,
     body: this.state.body
   }
-
-  database.push(player);
+  this.props.savePlayer(player);
   this.setState({
     title: '',
     body: '',
@@ -49,11 +45,12 @@ handleSubmit(e) {
 }
 
 renderPlayers() {
-  return _.map(this.state.players, (player, key) => {
+  return _.map(this.props.players, (player, key) => {
     return (
       <div key="key">
         <p>{player.title}</p>
         <h2>{player.body}</h2>
+        <button className="delete-button" onClick={()=>this.props.deletePlayer(key)}>Delete</button>
       </div>
     )
   });
@@ -64,7 +61,7 @@ renderPlayers() {
       <div className="App">
         <form onSubmit={this.handleSubmit}>
           <div>
-            <input type="text"
+            <input
               onChange={this.handleChange}
               value={this.state.title}
               type="text"
@@ -97,4 +94,10 @@ renderPlayers() {
   }
 }
 
-export default App;
+function mapStateToProps(state, ownProps) {
+  return {
+    players: state.players
+  }
+}
+
+export default connect(mapStateToProps, { getPlayers, savePlayer, deletePlayer })(App);
