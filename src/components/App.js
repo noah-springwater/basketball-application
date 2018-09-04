@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import { Link } from 'react-router-dom';
 import _ from 'lodash';
 import {connect} from 'react-redux';
 import {getPlayers, savePlayer, deletePlayer} from '../actions/playersAction';
@@ -22,11 +23,6 @@ constructor(props) {
   this.renderPlayers = this.renderPlayers.bind(this);
 }
 
-componentDidMount() {
-  this.props.getPlayers();
-  this.props.getUser();
-}
-
 handleChange(e) {
   this.setState({
     [e.target.name]: e.target.value,
@@ -37,7 +33,8 @@ handleSubmit(e) {
   e.preventDefault();
   const player = {
     title: this.state.title,
-    body: this.state.body
+    body: this.state.body,
+    uid: this.props.user.uid
   }
   this.props.savePlayer(player);
   this.setState({
@@ -50,11 +47,16 @@ renderPlayers() {
   return _.map(this.props.players, (player, key) => {
     return (
       <PlayerCard key={key}>
-        <p>{player.title}</p>
+        <Link to={`/${key}`}>
+          <p>{player.title}</p>
+        </Link>
         <h2>{player.body}</h2>
-        <button className="delete-button" onClick={()=>this.props.deletePlayer(key)}>Delete</button>
+        {player.uid === this.props.user.uid && (
+          <button className="delete-button" onClick={()=>this.props.deletePlayer(key)}>
+            Delete
+          </button>)}
       </PlayerCard>
-    )
+    );
   });
 }
 

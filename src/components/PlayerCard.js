@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-const PlayerCard = (props) => (
+const PlayerCard = ({children}) => (
   <div className="card-container">
-    <div>{props.children}</div>
+    <div>{children}</div>
   </div>
 );
 
